@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
         if (!userId) break;
 
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const periodEnd = subscription.items.data[0]?.current_period_end;
 
         await prisma.license.upsert({
           where: { userId },
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
             status: "active",
             stripeCustomerId: session.customer as string,
             stripeSubscriptionId: subscriptionId,
-            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+            currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : null,
             cancelAtPeriodEnd: subscription.cancel_at_period_end,
           },
           update: {
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
             status: "active",
             stripeCustomerId: session.customer as string,
             stripeSubscriptionId: subscriptionId,
-            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+            currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : null,
             cancelAtPeriodEnd: subscription.cancel_at_period_end,
           },
         });
@@ -66,11 +67,12 @@ export async function POST(req: NextRequest) {
             ? "past_due"
             : "cancelled";
 
+        const periodEnd = subscription.items.data[0]?.current_period_end;
         await prisma.license.updateMany({
           where: { stripeSubscriptionId: subscription.id },
           data: {
             status,
-            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+            currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : null,
             cancelAtPeriodEnd: subscription.cancel_at_period_end,
           },
         });
@@ -103,11 +105,12 @@ export async function POST(req: NextRequest) {
         const subId = typeof invoice.subscription === "string" ? invoice.subscription : null;
         if (subId) {
           const subscription = await stripe.subscriptions.retrieve(subId);
+          const periodEnd = subscription.items.data[0]?.current_period_end;
           await prisma.license.updateMany({
             where: { stripeSubscriptionId: subId },
             data: {
               status: "active",
-              currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+              currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : null,
             },
           });
         }
