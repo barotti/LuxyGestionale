@@ -194,6 +194,7 @@ export type PropertyCollaboratorOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   property?: Prisma.PropertyOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
+  _relevance?: Prisma.PropertyCollaboratorOrderByRelevanceInput
 }
 
 export type PropertyCollaboratorWhereUniqueInput = Prisma.AtLeast<{
@@ -294,6 +295,12 @@ export type PropertyCollaboratorListRelationFilter = {
 
 export type PropertyCollaboratorOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type PropertyCollaboratorOrderByRelevanceInput = {
+  fields: Prisma.PropertyCollaboratorOrderByRelevanceFieldEnum | Prisma.PropertyCollaboratorOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type PropertyCollaboratorPropertyIdUserIdCompoundUniqueInput = {
@@ -572,25 +579,7 @@ export type PropertyCollaboratorSelect<ExtArgs extends runtime.Types.Extensions.
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["propertyCollaborator"]>
 
-export type PropertyCollaboratorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  propertyId?: boolean
-  userId?: boolean
-  roleOnProperty?: boolean
-  createdAt?: boolean
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["propertyCollaborator"]>
 
-export type PropertyCollaboratorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  propertyId?: boolean
-  userId?: boolean
-  roleOnProperty?: boolean
-  createdAt?: boolean
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["propertyCollaborator"]>
 
 export type PropertyCollaboratorSelectScalar = {
   id?: boolean
@@ -602,14 +591,6 @@ export type PropertyCollaboratorSelectScalar = {
 
 export type PropertyCollaboratorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "propertyId" | "userId" | "roleOnProperty" | "createdAt", ExtArgs["result"]["propertyCollaborator"]>
 export type PropertyCollaboratorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type PropertyCollaboratorIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type PropertyCollaboratorIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -744,30 +725,6 @@ export interface PropertyCollaboratorDelegate<ExtArgs extends runtime.Types.Exte
   createMany<T extends PropertyCollaboratorCreateManyArgs>(args?: Prisma.SelectSubset<T, PropertyCollaboratorCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many PropertyCollaborators and returns the data saved in the database.
-   * @param {PropertyCollaboratorCreateManyAndReturnArgs} args - Arguments to create many PropertyCollaborators.
-   * @example
-   * // Create many PropertyCollaborators
-   * const propertyCollaborator = await prisma.propertyCollaborator.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many PropertyCollaborators and only return the `id`
-   * const propertyCollaboratorWithIdOnly = await prisma.propertyCollaborator.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends PropertyCollaboratorCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, PropertyCollaboratorCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PropertyCollaboratorPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a PropertyCollaborator.
    * @param {PropertyCollaboratorDeleteArgs} args - Arguments to delete one PropertyCollaborator.
    * @example
@@ -830,36 +787,6 @@ export interface PropertyCollaboratorDelegate<ExtArgs extends runtime.Types.Exte
    * 
    */
   updateMany<T extends PropertyCollaboratorUpdateManyArgs>(args: Prisma.SelectSubset<T, PropertyCollaboratorUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more PropertyCollaborators and returns the data updated in the database.
-   * @param {PropertyCollaboratorUpdateManyAndReturnArgs} args - Arguments to update many PropertyCollaborators.
-   * @example
-   * // Update many PropertyCollaborators
-   * const propertyCollaborator = await prisma.propertyCollaborator.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more PropertyCollaborators and only return the `id`
-   * const propertyCollaboratorWithIdOnly = await prisma.propertyCollaborator.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends PropertyCollaboratorUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, PropertyCollaboratorUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PropertyCollaboratorPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one PropertyCollaborator.
@@ -1294,29 +1221,6 @@ export type PropertyCollaboratorCreateManyArgs<ExtArgs extends runtime.Types.Ext
 }
 
 /**
- * PropertyCollaborator createManyAndReturn
- */
-export type PropertyCollaboratorCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the PropertyCollaborator
-   */
-  select?: Prisma.PropertyCollaboratorSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the PropertyCollaborator
-   */
-  omit?: Prisma.PropertyCollaboratorOmit<ExtArgs> | null
-  /**
-   * The data used to create many PropertyCollaborators.
-   */
-  data: Prisma.PropertyCollaboratorCreateManyInput | Prisma.PropertyCollaboratorCreateManyInput[]
-  skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.PropertyCollaboratorIncludeCreateManyAndReturn<ExtArgs> | null
-}
-
-/**
  * PropertyCollaborator update
  */
 export type PropertyCollaboratorUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1358,36 +1262,6 @@ export type PropertyCollaboratorUpdateManyArgs<ExtArgs extends runtime.Types.Ext
    * Limit how many PropertyCollaborators to update.
    */
   limit?: number
-}
-
-/**
- * PropertyCollaborator updateManyAndReturn
- */
-export type PropertyCollaboratorUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the PropertyCollaborator
-   */
-  select?: Prisma.PropertyCollaboratorSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the PropertyCollaborator
-   */
-  omit?: Prisma.PropertyCollaboratorOmit<ExtArgs> | null
-  /**
-   * The data used to update PropertyCollaborators.
-   */
-  data: Prisma.XOR<Prisma.PropertyCollaboratorUpdateManyMutationInput, Prisma.PropertyCollaboratorUncheckedUpdateManyInput>
-  /**
-   * Filter which PropertyCollaborators to update
-   */
-  where?: Prisma.PropertyCollaboratorWhereInput
-  /**
-   * Limit how many PropertyCollaborators to update.
-   */
-  limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.PropertyCollaboratorIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

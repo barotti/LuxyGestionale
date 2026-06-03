@@ -167,7 +167,7 @@ export type PropertyGroupByOutputType = {
   location: string
   address: string | null
   description: string | null
-  images: string[]
+  images: runtime.JsonValue
   createdAt: Date
   updatedAt: Date
   _count: PropertyCountAggregateOutputType | null
@@ -199,7 +199,7 @@ export type PropertyWhereInput = {
   location?: Prisma.StringFilter<"Property"> | string
   address?: Prisma.StringNullableFilter<"Property"> | string | null
   description?: Prisma.StringNullableFilter<"Property"> | string | null
-  images?: Prisma.StringNullableListFilter<"Property">
+  images?: Prisma.JsonFilter<"Property">
   createdAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   rooms?: Prisma.RoomListRelationFilter
@@ -219,6 +219,7 @@ export type PropertyOrderByWithRelationInput = {
   rooms?: Prisma.RoomOrderByRelationAggregateInput
   bookings?: Prisma.BookingOrderByRelationAggregateInput
   collaborators?: Prisma.PropertyCollaboratorOrderByRelationAggregateInput
+  _relevance?: Prisma.PropertyOrderByRelevanceInput
 }
 
 export type PropertyWhereUniqueInput = Prisma.AtLeast<{
@@ -230,7 +231,7 @@ export type PropertyWhereUniqueInput = Prisma.AtLeast<{
   location?: Prisma.StringFilter<"Property"> | string
   address?: Prisma.StringNullableFilter<"Property"> | string | null
   description?: Prisma.StringNullableFilter<"Property"> | string | null
-  images?: Prisma.StringNullableListFilter<"Property">
+  images?: Prisma.JsonFilter<"Property">
   createdAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   rooms?: Prisma.RoomListRelationFilter
@@ -261,7 +262,7 @@ export type PropertyScalarWhereWithAggregatesInput = {
   location?: Prisma.StringWithAggregatesFilter<"Property"> | string
   address?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
-  images?: Prisma.StringNullableListFilter<"Property">
+  images?: Prisma.JsonWithAggregatesFilter<"Property">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Property"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Property"> | Date | string
 }
@@ -272,7 +273,7 @@ export type PropertyCreateInput = {
   location: string
   address?: string | null
   description?: string | null
-  images?: Prisma.PropertyCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   rooms?: Prisma.RoomCreateNestedManyWithoutPropertyInput
@@ -286,7 +287,7 @@ export type PropertyUncheckedCreateInput = {
   location: string
   address?: string | null
   description?: string | null
-  images?: Prisma.PropertyCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   rooms?: Prisma.RoomUncheckedCreateNestedManyWithoutPropertyInput
@@ -300,7 +301,7 @@ export type PropertyUpdateInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.PropertyUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rooms?: Prisma.RoomUpdateManyWithoutPropertyNestedInput
@@ -314,7 +315,7 @@ export type PropertyUncheckedUpdateInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.PropertyUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rooms?: Prisma.RoomUncheckedUpdateManyWithoutPropertyNestedInput
@@ -328,7 +329,7 @@ export type PropertyCreateManyInput = {
   location: string
   address?: string | null
   description?: string | null
-  images?: Prisma.PropertyCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -339,7 +340,7 @@ export type PropertyUpdateManyMutationInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.PropertyUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -350,17 +351,15 @@ export type PropertyUncheckedUpdateManyInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.PropertyUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type StringNullableListFilter<$PrismaModel = never> = {
-  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
-  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
-  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  isEmpty?: boolean
+export type PropertyOrderByRelevanceInput = {
+  fields: Prisma.PropertyOrderByRelevanceFieldEnum | Prisma.PropertyOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type PropertyCountOrderByAggregateInput = {
@@ -397,15 +396,6 @@ export type PropertyMinOrderByAggregateInput = {
 export type PropertyScalarRelationFilter = {
   is?: Prisma.PropertyWhereInput
   isNot?: Prisma.PropertyWhereInput
-}
-
-export type PropertyCreateimagesInput = {
-  set: string[]
-}
-
-export type PropertyUpdateimagesInput = {
-  set?: string[]
-  push?: string | string[]
 }
 
 export type PropertyCreateNestedOneWithoutRoomsInput = {
@@ -456,7 +446,7 @@ export type PropertyCreateWithoutRoomsInput = {
   location: string
   address?: string | null
   description?: string | null
-  images?: Prisma.PropertyCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   bookings?: Prisma.BookingCreateNestedManyWithoutPropertyInput
@@ -469,7 +459,7 @@ export type PropertyUncheckedCreateWithoutRoomsInput = {
   location: string
   address?: string | null
   description?: string | null
-  images?: Prisma.PropertyCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutPropertyInput
@@ -498,7 +488,7 @@ export type PropertyUpdateWithoutRoomsInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.PropertyUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookings?: Prisma.BookingUpdateManyWithoutPropertyNestedInput
@@ -511,7 +501,7 @@ export type PropertyUncheckedUpdateWithoutRoomsInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.PropertyUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutPropertyNestedInput
@@ -524,7 +514,7 @@ export type PropertyCreateWithoutBookingsInput = {
   location: string
   address?: string | null
   description?: string | null
-  images?: Prisma.PropertyCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   rooms?: Prisma.RoomCreateNestedManyWithoutPropertyInput
@@ -537,7 +527,7 @@ export type PropertyUncheckedCreateWithoutBookingsInput = {
   location: string
   address?: string | null
   description?: string | null
-  images?: Prisma.PropertyCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   rooms?: Prisma.RoomUncheckedCreateNestedManyWithoutPropertyInput
@@ -566,7 +556,7 @@ export type PropertyUpdateWithoutBookingsInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.PropertyUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rooms?: Prisma.RoomUpdateManyWithoutPropertyNestedInput
@@ -579,7 +569,7 @@ export type PropertyUncheckedUpdateWithoutBookingsInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.PropertyUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rooms?: Prisma.RoomUncheckedUpdateManyWithoutPropertyNestedInput
@@ -592,7 +582,7 @@ export type PropertyCreateWithoutCollaboratorsInput = {
   location: string
   address?: string | null
   description?: string | null
-  images?: Prisma.PropertyCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   rooms?: Prisma.RoomCreateNestedManyWithoutPropertyInput
@@ -605,7 +595,7 @@ export type PropertyUncheckedCreateWithoutCollaboratorsInput = {
   location: string
   address?: string | null
   description?: string | null
-  images?: Prisma.PropertyCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   rooms?: Prisma.RoomUncheckedCreateNestedManyWithoutPropertyInput
@@ -634,7 +624,7 @@ export type PropertyUpdateWithoutCollaboratorsInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.PropertyUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rooms?: Prisma.RoomUpdateManyWithoutPropertyNestedInput
@@ -647,7 +637,7 @@ export type PropertyUncheckedUpdateWithoutCollaboratorsInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.PropertyUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rooms?: Prisma.RoomUncheckedUpdateManyWithoutPropertyNestedInput
@@ -718,27 +708,7 @@ export type PropertySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   _count?: boolean | Prisma.PropertyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["property"]>
 
-export type PropertySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  name?: boolean
-  location?: boolean
-  address?: boolean
-  description?: boolean
-  images?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-}, ExtArgs["result"]["property"]>
 
-export type PropertySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  name?: boolean
-  location?: boolean
-  address?: boolean
-  description?: boolean
-  images?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-}, ExtArgs["result"]["property"]>
 
 export type PropertySelectScalar = {
   id?: boolean
@@ -758,8 +728,6 @@ export type PropertyInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   collaborators?: boolean | Prisma.Property$collaboratorsArgs<ExtArgs>
   _count?: boolean | Prisma.PropertyCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type PropertyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type PropertyIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $PropertyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Property"
@@ -774,7 +742,7 @@ export type $PropertyPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     location: string
     address: string | null
     description: string | null
-    images: string[]
+    images: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["property"]>
@@ -895,30 +863,6 @@ export interface PropertyDelegate<ExtArgs extends runtime.Types.Extensions.Inter
   createMany<T extends PropertyCreateManyArgs>(args?: Prisma.SelectSubset<T, PropertyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many Properties and returns the data saved in the database.
-   * @param {PropertyCreateManyAndReturnArgs} args - Arguments to create many Properties.
-   * @example
-   * // Create many Properties
-   * const property = await prisma.property.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many Properties and only return the `id`
-   * const propertyWithIdOnly = await prisma.property.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends PropertyCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, PropertyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PropertyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a Property.
    * @param {PropertyDeleteArgs} args - Arguments to delete one Property.
    * @example
@@ -981,36 +925,6 @@ export interface PropertyDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    * 
    */
   updateMany<T extends PropertyUpdateManyArgs>(args: Prisma.SelectSubset<T, PropertyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more Properties and returns the data updated in the database.
-   * @param {PropertyUpdateManyAndReturnArgs} args - Arguments to update many Properties.
-   * @example
-   * // Update many Properties
-   * const property = await prisma.property.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more Properties and only return the `id`
-   * const propertyWithIdOnly = await prisma.property.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends PropertyUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, PropertyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PropertyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one Property.
@@ -1208,7 +1122,7 @@ export interface PropertyFieldRefs {
   readonly location: Prisma.FieldRef<"Property", 'String'>
   readonly address: Prisma.FieldRef<"Property", 'String'>
   readonly description: Prisma.FieldRef<"Property", 'String'>
-  readonly images: Prisma.FieldRef<"Property", 'String[]'>
+  readonly images: Prisma.FieldRef<"Property", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Property", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Property", 'DateTime'>
 }
@@ -1449,25 +1363,6 @@ export type PropertyCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
- * Property createManyAndReturn
- */
-export type PropertyCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Property
-   */
-  select?: Prisma.PropertySelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the Property
-   */
-  omit?: Prisma.PropertyOmit<ExtArgs> | null
-  /**
-   * The data used to create many Properties.
-   */
-  data: Prisma.PropertyCreateManyInput | Prisma.PropertyCreateManyInput[]
-  skipDuplicates?: boolean
-}
-
-/**
  * Property update
  */
 export type PropertyUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1497,32 +1392,6 @@ export type PropertyUpdateArgs<ExtArgs extends runtime.Types.Extensions.Internal
  * Property updateMany
  */
 export type PropertyUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * The data used to update Properties.
-   */
-  data: Prisma.XOR<Prisma.PropertyUpdateManyMutationInput, Prisma.PropertyUncheckedUpdateManyInput>
-  /**
-   * Filter which Properties to update
-   */
-  where?: Prisma.PropertyWhereInput
-  /**
-   * Limit how many Properties to update.
-   */
-  limit?: number
-}
-
-/**
- * Property updateManyAndReturn
- */
-export type PropertyUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Property
-   */
-  select?: Prisma.PropertySelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the Property
-   */
-  omit?: Prisma.PropertyOmit<ExtArgs> | null
   /**
    * The data used to update Properties.
    */

@@ -46,15 +46,18 @@ interface BookingCalendarProps {
   roomId: string | null;
   onRangeSelect?: (checkIn: Date, checkOut: Date, nights: number, rate: MonthlyRate | null) => void;
   onBookingMoved?: () => void;
+  forcedCheckIn?: Date | null;
+  forcedCheckOut?: Date | null;
+  onOccupiedDays?: (occupied: Set<string>) => void;
 }
 
 const WEEKDAYS = ["Lu", "Ma", "Me", "Gi", "Ve", "Sa", "Do"];
 
 const STATUS_BG: Record<string, string> = {
-  in_trattativa: "bg-[#B8950A] text-[#FFF8E0]",
-  bloccato: "bg-[#2C4A7B] text-white",
-  prenotato: "bg-[#7B2020] text-white",
-  finalizzato: "bg-[#1A5C3A] text-white",
+  in_trattativa: "bg-[#B8950A]/80 text-[#FFF8E0]",
+  bloccato: "bg-[#2C4A7B]/80 text-white",
+  prenotato: "bg-[#7B2020]/80 text-white",
+  finalizzato: "bg-[#1A5C3A]/80 text-white",
 };
 
 function parseDate(str: string): Date {
@@ -88,12 +91,12 @@ function EmptyDropDay({
       className={[
         "relative h-16 rounded-lg text-sm flex flex-col items-center justify-start pt-1.5 cursor-pointer transition-all select-none",
         isOver && isDragging
-          ? "bg-[#C9A75F]/40 border-2 border-dashed border-[#C9A75F]"
+          ? "bg-[#C9A75F]/30 border-2 border-dashed border-[#C9A75F]/70"
           : isSelected
           ? "bg-[#C9A75F] text-[#070A0D] font-bold"
           : isInRange
-          ? "bg-[#C9A75F]/20 text-[#F4F0E6]"
-          : "bg-[#1A2030] hover:bg-[#2A3040] text-[#F4F0E6]",
+          ? "bg-[#C9A75F]/15 text-white/80"
+          : "bg-white/[0.04] hover:bg-white/[0.08] text-white/75",
       ].join(" ")}
     >
       <span className="font-semibold">{format(day, "d")}</span>
@@ -158,6 +161,9 @@ export function BookingCalendar({
   roomId,
   onRangeSelect,
   onBookingMoved,
+  forcedCheckIn,
+  forcedCheckOut,
+  onOccupiedDays,
 }: BookingCalendarProps) {
   const [currentDate, setCurrentDate] = useState(() => {
     const now = new Date();
@@ -172,6 +178,15 @@ export function BookingCalendar({
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;
+
+  // Sync selection when parent adjusts dates externally
+  useEffect(() => {
+    if (forcedCheckIn != null) setSelectStart(forcedCheckIn);
+  }, [forcedCheckIn]);
+
+  useEffect(() => {
+    if (forcedCheckOut != null) setSelectEnd(forcedCheckOut);
+  }, [forcedCheckOut]);
 
   useEffect(() => {
     if (!roomId) {
@@ -206,6 +221,12 @@ export function BookingCalendar({
     }
     return map;
   }, [bookings]);
+
+  // Notify parent of occupied days whenever dayMap changes
+  useEffect(() => {
+    onOccupiedDays?.(new Set(dayMap.keys()));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dayMap]);
 
   // Calendar grid
   const firstDay = startOfMonth(currentDate);
@@ -349,30 +370,30 @@ export function BookingCalendar({
       <div className="flex items-center justify-between mb-3">
         <button
           onClick={() => setCurrentDate((d) => subMonths(d, 1))}
-          className="p-1.5 rounded hover:bg-[#2A3040] text-[#A6A29A] hover:text-[#F4F0E6] transition-colors text-sm"
+          className="p-1.5 rounded hover:bg-white/[0.08] text-white/40 hover:text-white/80 transition-colors text-sm"
         >
           ◄
         </button>
         <div className="text-center">
-          <p className="text-[#F4F0E6] font-semibold text-sm">
+          <p className="text-white/85 font-semibold text-sm">
             {format(currentDate, "MMMM yyyy", { locale: it }).toUpperCase()}
           </p>
           {monthlyRate ? (
-            <p className="text-[#A6A29A] text-xs mt-0.5">
+            <p className="text-white/35 text-xs mt-0.5">
               PREZZO:{" "}
               <span className="text-[#C9A75F]">€{monthlyRate.price}</span> |
               PULIZIE:{" "}
               <span className="text-[#C9A75F]">€{monthlyRate.cleaningFee}</span>
             </p>
           ) : roomId ? (
-            <p className="text-[#A6A29A] text-xs mt-0.5">
+            <p className="text-white/30 text-xs mt-0.5">
               Nessun listino per questo mese
             </p>
           ) : null}
         </div>
         <button
           onClick={() => setCurrentDate((d) => addMonths(d, 1))}
-          className="p-1.5 rounded hover:bg-[#2A3040] text-[#A6A29A] hover:text-[#F4F0E6] transition-colors text-sm"
+          className="p-1.5 rounded hover:bg-white/[0.08] text-white/40 hover:text-white/80 transition-colors text-sm"
         >
           ►
         </button>
@@ -383,7 +404,7 @@ export function BookingCalendar({
         {WEEKDAYS.map((wd) => (
           <div
             key={wd}
-            className="text-center text-[#A6A29A] text-xs font-medium py-1"
+            className="text-center text-white/35 text-xs font-medium py-1"
           >
             {wd}
           </div>
@@ -392,7 +413,7 @@ export function BookingCalendar({
 
       {/* Grid */}
       {loading ? (
-        <div className="h-40 flex items-center justify-center text-[#A6A29A] text-sm">
+        <div className="h-40 flex items-center justify-center text-white/35 text-sm">
           Caricamento...
         </div>
       ) : (
@@ -435,12 +456,12 @@ export function BookingCalendar({
       )}
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-3 mt-4 text-[11px] text-[#A6A29A]">
+      <div className="flex flex-wrap gap-3 mt-4 text-[11px] text-white/35">
         {[
-          { color: "bg-[#1A2030]", label: "Disponibile" },
-          { color: "bg-[#2C4A7B]", label: "Bloccato" },
-          { color: "bg-[#B8950A]", label: "In Trattativa" },
-          { color: "bg-[#7B2020]", label: "Prenotato" },
+          { color: "bg-white/[0.08]", label: "Disponibile" },
+          { color: "bg-[#2C4A7B]/80", label: "Bloccato" },
+          { color: "bg-[#B8950A]/80", label: "In Trattativa" },
+          { color: "bg-[#7B2020]/80", label: "Prenotato" },
         ].map(({ color, label }) => (
           <span key={label} className="flex items-center gap-1.5">
             <span className={`w-3 h-3 rounded ${color}`} />

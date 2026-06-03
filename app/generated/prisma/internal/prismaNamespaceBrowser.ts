@@ -190,12 +190,11 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
 } as const
 
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const NullsOrder = {
@@ -204,4 +203,95 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  nickname: 'nickname',
+  email: 'email',
+  passwordHash: 'passwordHash'
+} as const
+
+export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const PropertyOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  location: 'location',
+  address: 'address',
+  description: 'description'
+} as const
+
+export type PropertyOrderByRelevanceFieldEnum = (typeof PropertyOrderByRelevanceFieldEnum)[keyof typeof PropertyOrderByRelevanceFieldEnum]
+
+
+export const RoomOrderByRelevanceFieldEnum = {
+  id: 'id',
+  propertyId: 'propertyId',
+  name: 'name',
+  description: 'description'
+} as const
+
+export type RoomOrderByRelevanceFieldEnum = (typeof RoomOrderByRelevanceFieldEnum)[keyof typeof RoomOrderByRelevanceFieldEnum]
+
+
+export const MonthlyRateOrderByRelevanceFieldEnum = {
+  id: 'id',
+  roomId: 'roomId'
+} as const
+
+export type MonthlyRateOrderByRelevanceFieldEnum = (typeof MonthlyRateOrderByRelevanceFieldEnum)[keyof typeof MonthlyRateOrderByRelevanceFieldEnum]
+
+
+export const BookingOrderByRelevanceFieldEnum = {
+  id: 'id',
+  propertyId: 'propertyId',
+  roomId: 'roomId',
+  clientFirstName: 'clientFirstName',
+  clientLastName: 'clientLastName',
+  clientPhone: 'clientPhone',
+  clientEmail: 'clientEmail',
+  paymentMethodId: 'paymentMethodId',
+  bookingSource: 'bookingSource',
+  notes: 'notes',
+  collaboratorId: 'collaboratorId',
+  quotePdfUrl: 'quotePdfUrl'
+} as const
+
+export type BookingOrderByRelevanceFieldEnum = (typeof BookingOrderByRelevanceFieldEnum)[keyof typeof BookingOrderByRelevanceFieldEnum]
+
+
+export const PaymentMethodOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name'
+} as const
+
+export type PaymentMethodOrderByRelevanceFieldEnum = (typeof PaymentMethodOrderByRelevanceFieldEnum)[keyof typeof PaymentMethodOrderByRelevanceFieldEnum]
+
+
+export const PropertyCollaboratorOrderByRelevanceFieldEnum = {
+  id: 'id',
+  propertyId: 'propertyId',
+  userId: 'userId'
+} as const
+
+export type PropertyCollaboratorOrderByRelevanceFieldEnum = (typeof PropertyCollaboratorOrderByRelevanceFieldEnum)[keyof typeof PropertyCollaboratorOrderByRelevanceFieldEnum]
 

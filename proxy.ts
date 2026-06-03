@@ -1,9 +1,20 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+const PUBLIC_PATHS = ["/register", "/license/success"];
+
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isLoginPage = pathname === "/login";
+
+  // Rotte sempre accessibili senza login
+  if (
+    PUBLIC_PATHS.includes(pathname) ||
+    pathname.startsWith("/api/stripe") ||
+    pathname.startsWith("/api/register")
+  ) {
+    return NextResponse.next();
+  }
 
   // NextAuth v5 usa questi cookie per la sessione JWT
   const sessionToken =

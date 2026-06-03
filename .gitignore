@@ -44,3 +44,10 @@ yarn-error.log*
 next-env.d.ts
 
 # /app/generated/prisma  ← incluso nel repo, generato da postinstall su Vercel
+# escludi binary Windows-specifici (vengono rigenerati da prisma generate)
+app/generated/prisma/*.dll.node
+app/generated/prisma/*.dll.node.tmp*
+app/generated/prisma/*.tmp*
+
+# upload utenti (persistono sul server, non in git)
+public/uploads/

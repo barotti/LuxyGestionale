@@ -1,9 +1,29 @@
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { BookingsClient } from "@/components/BookingsClient";
+import type { Prisma } from "@/app/generated/prisma";
 
 export default async function BookingsPage() {
+  const session = await auth();
+  const role = session?.user?.role ?? "collaboratore";
+  const userId = session?.user?.id ?? "";
+
+  let where: Prisma.BookingWhereInput = {};
+
+  if (role === "concierge") {
+    where = { collaboratorId: userId };
+  } else if (role === "owner") {
+    const myLinks = await prisma.propertyCollaborator.findMany({
+      where: { userId },
+      select: { propertyId: true },
+    });
+    where = { propertyId: { in: myLinks.map((l) => l.propertyId) } };
+  }
+  // admin: no filter
+
   const [bookings, paymentMethods] = await Promise.all([
     prisma.booking.findMany({
+      where,
       include: { property: true, room: true, paymentMethod: true },
       orderBy: { checkIn: "desc" },
     }),

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Sparkles } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,25 +32,29 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#070A0D] px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
-        <div className="text-center mb-10">
-          <h1 className="text-[#C9A75F] text-3xl font-bold tracking-[0.3em] uppercase mb-1">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4"
+            style={{ background: "linear-gradient(135deg, #C9A75F 0%, #E0C27A 100%)" }}>
+            <Sparkles className="w-7 h-7 text-[#070A0D]" />
+          </div>
+          <h1 className="text-[#E0C27A] text-2xl font-bold tracking-[0.22em] uppercase mb-1">
             LUXY
           </h1>
-          <p className="text-[#A6A29A] text-xs tracking-[0.2em] uppercase">
+          <p className="text-white/35 text-xs tracking-[0.2em] uppercase">
             Experience — Gestionale
           </p>
         </div>
 
-        {/* Card */}
-        <div className="bg-[#151A24] border border-[#2A3040] rounded-xl p-8 shadow-2xl">
-          <h2 className="text-[#F4F0E6] text-lg font-semibold mb-6">Accedi</h2>
+        {/* Glass Card */}
+        <div className="glass-modal p-8">
+          <h2 className="text-white/90 text-lg font-semibold mb-6">Accedi</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-[#A6A29A] text-xs uppercase tracking-wider mb-1.5">
+              <label className="block text-white/40 text-[10px] uppercase tracking-wider mb-1.5">
                 Nickname
               </label>
               <input
@@ -57,13 +62,13 @@ export default function LoginPage() {
                 type="text"
                 required
                 autoComplete="username"
-                className="w-full bg-[#10141C] border border-[#2A3040] rounded-lg px-4 py-2.5 text-[#F4F0E6] text-sm placeholder-[#A6A29A] focus:border-[#C9A75F] focus:outline-none transition-colors"
+                className="glass-input w-full rounded-lg px-4 py-2.5 text-sm"
                 placeholder="Il tuo nickname"
               />
             </div>
 
             <div>
-              <label className="block text-[#A6A29A] text-xs uppercase tracking-wider mb-1.5">
+              <label className="block text-white/40 text-[10px] uppercase tracking-wider mb-1.5">
                 Password
               </label>
               <input
@@ -71,13 +76,13 @@ export default function LoginPage() {
                 type="password"
                 required
                 autoComplete="current-password"
-                className="w-full bg-[#10141C] border border-[#2A3040] rounded-lg px-4 py-2.5 text-[#F4F0E6] text-sm placeholder-[#A6A29A] focus:border-[#C9A75F] focus:outline-none transition-colors"
+                className="glass-input w-full rounded-lg px-4 py-2.5 text-sm"
                 placeholder="••••••••"
               />
             </div>
 
             {error && (
-              <p className="text-[#D95D5D] text-sm bg-[#D95D5D]/10 border border-[#D95D5D]/20 rounded-lg px-3 py-2">
+              <p className="text-[#D95D5D] text-sm bg-[#D95D5D]/8 border border-[#D95D5D]/20 rounded-lg px-3 py-2">
                 {error}
               </p>
             )}
@@ -85,12 +90,20 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#C9A75F] hover:bg-[#E0C27A] disabled:opacity-50 disabled:cursor-not-allowed text-[#070A0D] font-semibold rounded-lg px-4 py-2.5 text-sm tracking-wide transition-colors mt-2"
+              className="w-full font-semibold rounded-lg px-4 py-2.5 text-sm tracking-wide transition-all duration-200 mt-2 disabled:opacity-50 disabled:cursor-not-allowed text-[#070A0D]"
+              style={{ background: loading ? "#C9A75F" : "linear-gradient(135deg, #C9A75F 0%, #E0C27A 100%)" }}
             >
               {loading ? "Accesso in corso..." : "Accedi"}
             </button>
           </form>
         </div>
+
+        <p className="text-center text-white/35 text-sm mt-5">
+          Non hai un account?{" "}
+          <a href="/register" className="text-[#C9A75F] hover:text-[#E0C27A] transition-colors">
+            Registrati
+          </a>
+        </p>
       </div>
     </div>
   );

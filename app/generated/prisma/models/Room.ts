@@ -199,7 +199,7 @@ export type RoomGroupByOutputType = {
   name: string
   capacity: number
   description: string | null
-  images: string[]
+  images: runtime.JsonValue
   createdAt: Date
   updatedAt: Date
   _count: RoomCountAggregateOutputType | null
@@ -233,7 +233,7 @@ export type RoomWhereInput = {
   name?: Prisma.StringFilter<"Room"> | string
   capacity?: Prisma.IntFilter<"Room"> | number
   description?: Prisma.StringNullableFilter<"Room"> | string | null
-  images?: Prisma.StringNullableListFilter<"Room">
+  images?: Prisma.JsonFilter<"Room">
   createdAt?: Prisma.DateTimeFilter<"Room"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Room"> | Date | string
   property?: Prisma.XOR<Prisma.PropertyScalarRelationFilter, Prisma.PropertyWhereInput>
@@ -253,6 +253,7 @@ export type RoomOrderByWithRelationInput = {
   property?: Prisma.PropertyOrderByWithRelationInput
   monthlyRates?: Prisma.MonthlyRateOrderByRelationAggregateInput
   bookings?: Prisma.BookingOrderByRelationAggregateInput
+  _relevance?: Prisma.RoomOrderByRelevanceInput
 }
 
 export type RoomWhereUniqueInput = Prisma.AtLeast<{
@@ -264,7 +265,7 @@ export type RoomWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Room"> | string
   capacity?: Prisma.IntFilter<"Room"> | number
   description?: Prisma.StringNullableFilter<"Room"> | string | null
-  images?: Prisma.StringNullableListFilter<"Room">
+  images?: Prisma.JsonFilter<"Room">
   createdAt?: Prisma.DateTimeFilter<"Room"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Room"> | Date | string
   property?: Prisma.XOR<Prisma.PropertyScalarRelationFilter, Prisma.PropertyWhereInput>
@@ -297,7 +298,7 @@ export type RoomScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Room"> | string
   capacity?: Prisma.IntWithAggregatesFilter<"Room"> | number
   description?: Prisma.StringNullableWithAggregatesFilter<"Room"> | string | null
-  images?: Prisma.StringNullableListFilter<"Room">
+  images?: Prisma.JsonWithAggregatesFilter<"Room">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Room"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Room"> | Date | string
 }
@@ -307,7 +308,7 @@ export type RoomCreateInput = {
   name: string
   capacity?: number
   description?: string | null
-  images?: Prisma.RoomCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   property: Prisma.PropertyCreateNestedOneWithoutRoomsInput
@@ -321,7 +322,7 @@ export type RoomUncheckedCreateInput = {
   name: string
   capacity?: number
   description?: string | null
-  images?: Prisma.RoomCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   monthlyRates?: Prisma.MonthlyRateUncheckedCreateNestedManyWithoutRoomInput
@@ -333,7 +334,7 @@ export type RoomUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.RoomUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   property?: Prisma.PropertyUpdateOneRequiredWithoutRoomsNestedInput
@@ -347,7 +348,7 @@ export type RoomUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.RoomUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   monthlyRates?: Prisma.MonthlyRateUncheckedUpdateManyWithoutRoomNestedInput
@@ -360,7 +361,7 @@ export type RoomCreateManyInput = {
   name: string
   capacity?: number
   description?: string | null
-  images?: Prisma.RoomCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -370,7 +371,7 @@ export type RoomUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.RoomUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -381,7 +382,7 @@ export type RoomUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.RoomUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -394,6 +395,12 @@ export type RoomListRelationFilter = {
 
 export type RoomOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type RoomOrderByRelevanceInput = {
+  fields: Prisma.RoomOrderByRelevanceFieldEnum | Prisma.RoomOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type RoomCountOrderByAggregateInput = {
@@ -482,21 +489,12 @@ export type RoomUncheckedUpdateManyWithoutPropertyNestedInput = {
   deleteMany?: Prisma.RoomScalarWhereInput | Prisma.RoomScalarWhereInput[]
 }
 
-export type RoomCreateimagesInput = {
-  set: string[]
-}
-
 export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number
   decrement?: number
   multiply?: number
   divide?: number
-}
-
-export type RoomUpdateimagesInput = {
-  set?: string[]
-  push?: string | string[]
 }
 
 export type RoomCreateNestedOneWithoutMonthlyRatesInput = {
@@ -532,7 +530,7 @@ export type RoomCreateWithoutPropertyInput = {
   name: string
   capacity?: number
   description?: string | null
-  images?: Prisma.RoomCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   monthlyRates?: Prisma.MonthlyRateCreateNestedManyWithoutRoomInput
@@ -544,7 +542,7 @@ export type RoomUncheckedCreateWithoutPropertyInput = {
   name: string
   capacity?: number
   description?: string | null
-  images?: Prisma.RoomCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   monthlyRates?: Prisma.MonthlyRateUncheckedCreateNestedManyWithoutRoomInput
@@ -586,7 +584,7 @@ export type RoomScalarWhereInput = {
   name?: Prisma.StringFilter<"Room"> | string
   capacity?: Prisma.IntFilter<"Room"> | number
   description?: Prisma.StringNullableFilter<"Room"> | string | null
-  images?: Prisma.StringNullableListFilter<"Room">
+  images?: Prisma.JsonFilter<"Room">
   createdAt?: Prisma.DateTimeFilter<"Room"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Room"> | Date | string
 }
@@ -596,7 +594,7 @@ export type RoomCreateWithoutMonthlyRatesInput = {
   name: string
   capacity?: number
   description?: string | null
-  images?: Prisma.RoomCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   property: Prisma.PropertyCreateNestedOneWithoutRoomsInput
@@ -609,7 +607,7 @@ export type RoomUncheckedCreateWithoutMonthlyRatesInput = {
   name: string
   capacity?: number
   description?: string | null
-  images?: Prisma.RoomCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutRoomInput
@@ -636,7 +634,7 @@ export type RoomUpdateWithoutMonthlyRatesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.RoomUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   property?: Prisma.PropertyUpdateOneRequiredWithoutRoomsNestedInput
@@ -649,7 +647,7 @@ export type RoomUncheckedUpdateWithoutMonthlyRatesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.RoomUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutRoomNestedInput
@@ -660,7 +658,7 @@ export type RoomCreateWithoutBookingsInput = {
   name: string
   capacity?: number
   description?: string | null
-  images?: Prisma.RoomCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   property: Prisma.PropertyCreateNestedOneWithoutRoomsInput
@@ -673,7 +671,7 @@ export type RoomUncheckedCreateWithoutBookingsInput = {
   name: string
   capacity?: number
   description?: string | null
-  images?: Prisma.RoomCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   monthlyRates?: Prisma.MonthlyRateUncheckedCreateNestedManyWithoutRoomInput
@@ -700,7 +698,7 @@ export type RoomUpdateWithoutBookingsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.RoomUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   property?: Prisma.PropertyUpdateOneRequiredWithoutRoomsNestedInput
@@ -713,7 +711,7 @@ export type RoomUncheckedUpdateWithoutBookingsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.RoomUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   monthlyRates?: Prisma.MonthlyRateUncheckedUpdateManyWithoutRoomNestedInput
@@ -724,7 +722,7 @@ export type RoomCreateManyPropertyInput = {
   name: string
   capacity?: number
   description?: string | null
-  images?: Prisma.RoomCreateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -734,7 +732,7 @@ export type RoomUpdateWithoutPropertyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.RoomUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   monthlyRates?: Prisma.MonthlyRateUpdateManyWithoutRoomNestedInput
@@ -746,7 +744,7 @@ export type RoomUncheckedUpdateWithoutPropertyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.RoomUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   monthlyRates?: Prisma.MonthlyRateUncheckedUpdateManyWithoutRoomNestedInput
@@ -758,7 +756,7 @@ export type RoomUncheckedUpdateManyWithoutPropertyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  images?: Prisma.RoomUpdateimagesInput | string[]
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -818,29 +816,7 @@ export type RoomSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   _count?: boolean | Prisma.RoomCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["room"]>
 
-export type RoomSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  propertyId?: boolean
-  name?: boolean
-  capacity?: boolean
-  description?: boolean
-  images?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["room"]>
 
-export type RoomSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  propertyId?: boolean
-  name?: boolean
-  capacity?: boolean
-  description?: boolean
-  images?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["room"]>
 
 export type RoomSelectScalar = {
   id?: boolean
@@ -860,12 +836,6 @@ export type RoomInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   bookings?: boolean | Prisma.Room$bookingsArgs<ExtArgs>
   _count?: boolean | Prisma.RoomCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type RoomIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-}
-export type RoomIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-}
 
 export type $RoomPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Room"
@@ -880,7 +850,7 @@ export type $RoomPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     name: string
     capacity: number
     description: string | null
-    images: string[]
+    images: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["room"]>
@@ -1001,30 +971,6 @@ export interface RoomDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
   createMany<T extends RoomCreateManyArgs>(args?: Prisma.SelectSubset<T, RoomCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many Rooms and returns the data saved in the database.
-   * @param {RoomCreateManyAndReturnArgs} args - Arguments to create many Rooms.
-   * @example
-   * // Create many Rooms
-   * const room = await prisma.room.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many Rooms and only return the `id`
-   * const roomWithIdOnly = await prisma.room.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends RoomCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, RoomCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RoomPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a Room.
    * @param {RoomDeleteArgs} args - Arguments to delete one Room.
    * @example
@@ -1087,36 +1033,6 @@ export interface RoomDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    * 
    */
   updateMany<T extends RoomUpdateManyArgs>(args: Prisma.SelectSubset<T, RoomUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more Rooms and returns the data updated in the database.
-   * @param {RoomUpdateManyAndReturnArgs} args - Arguments to update many Rooms.
-   * @example
-   * // Update many Rooms
-   * const room = await prisma.room.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more Rooms and only return the `id`
-   * const roomWithIdOnly = await prisma.room.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends RoomUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, RoomUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RoomPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one Room.
@@ -1314,7 +1230,7 @@ export interface RoomFieldRefs {
   readonly name: Prisma.FieldRef<"Room", 'String'>
   readonly capacity: Prisma.FieldRef<"Room", 'Int'>
   readonly description: Prisma.FieldRef<"Room", 'String'>
-  readonly images: Prisma.FieldRef<"Room", 'String[]'>
+  readonly images: Prisma.FieldRef<"Room", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Room", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Room", 'DateTime'>
 }
@@ -1555,29 +1471,6 @@ export type RoomCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * Room createManyAndReturn
- */
-export type RoomCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Room
-   */
-  select?: Prisma.RoomSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the Room
-   */
-  omit?: Prisma.RoomOmit<ExtArgs> | null
-  /**
-   * The data used to create many Rooms.
-   */
-  data: Prisma.RoomCreateManyInput | Prisma.RoomCreateManyInput[]
-  skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.RoomIncludeCreateManyAndReturn<ExtArgs> | null
-}
-
-/**
  * Room update
  */
 export type RoomUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1619,36 +1512,6 @@ export type RoomUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Rooms to update.
    */
   limit?: number
-}
-
-/**
- * Room updateManyAndReturn
- */
-export type RoomUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Room
-   */
-  select?: Prisma.RoomSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the Room
-   */
-  omit?: Prisma.RoomOmit<ExtArgs> | null
-  /**
-   * The data used to update Rooms.
-   */
-  data: Prisma.XOR<Prisma.RoomUpdateManyMutationInput, Prisma.RoomUncheckedUpdateManyInput>
-  /**
-   * Filter which Rooms to update
-   */
-  where?: Prisma.RoomWhereInput
-  /**
-   * Limit how many Rooms to update.
-   */
-  limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.RoomIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

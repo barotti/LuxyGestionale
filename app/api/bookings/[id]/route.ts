@@ -26,7 +26,7 @@ export async function PATCH(
 
   const data: Record<string, unknown> = {};
 
-  const validStatuses = ["in_trattativa", "bloccato", "prenotato", "finalizzato", "cancellato"];
+  const validStatuses = ["in_trattativa", "bloccato", "prenotato", "acconto", "finalizzato", "cancellato"];
   if (status !== undefined) {
     if (!validStatuses.includes(status)) {
       return NextResponse.json({ error: "Stato non valido" }, { status: 400 });
@@ -42,11 +42,32 @@ export async function PATCH(
   if (stayAmount !== undefined) data.stayAmount = Number(stayAmount);
   if (cleaningAmount !== undefined) data.cleaningAmount = Number(cleaningAmount);
 
+  // Fetch current booking to detect collectedAmount change
+  const current = await prisma.booking.findUnique({ where: { id } });
+
   const booking = await prisma.booking.update({
     where: { id },
     data,
     include: { property: true, room: true, paymentMethod: true },
   });
+
+  // Log acconto/saldo when collectedAmount increases
+  if (collectedAmount !== undefined && current) {
+    const newAmount = Number(collectedAmount);
+    const delta = newAmount - current.collectedAmount;
+    if (delta > 0) {
+      const resolvedStatus = (data.status as string | undefined) ?? current.status;
+      const logType = resolvedStatus === "finalizzato" ? "saldo" : "acconto";
+      await prisma.accontoLog.create({
+        data: {
+          bookingId: id,
+          amount: delta,
+          paymentMethodId: (data.paymentMethodId as string | null | undefined) ?? current.paymentMethodId ?? null,
+          type: logType,
+        },
+      });
+    }
+  }
 
   return NextResponse.json(booking);
 }

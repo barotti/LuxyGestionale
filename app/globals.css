@@ -2,7 +2,7 @@
 
 @theme inline {
   --color-luxy-bg: #070A0D;
-  --color-luxy-bg2: #10141C;
+  --color-luxy-bg2: #0D1117;
   --color-luxy-card: #151A24;
   --color-luxy-card-hover: #1A2030;
   --color-luxy-border: #2A3040;
@@ -24,36 +24,103 @@ html {
 }
 
 body {
-  background-color: #070A0D;
+  background-color: #060810;
+  background-image:
+    radial-gradient(ellipse 80% 70% at 5% 95%, rgba(90, 50, 180, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 55% at 95% 5%, rgba(40, 90, 200, 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 60% at 55% 50%, rgba(180, 140, 50, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 85% 80%, rgba(60, 130, 210, 0.08) 0%, transparent 45%);
+  background-attachment: fixed;
   color: #F4F0E6;
   font-family: var(--font-geist-sans, system-ui, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar dark */
+/* ── Glass components ─────────────────────────────────── */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+}
+
+.glass-card-hover:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.glass-modal {
+  background: rgba(10, 14, 28, 0.88);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 1rem;
+}
+
+.glass-sidebar {
+  background: rgba(8, 11, 20, 0.78);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  color: #F4F0E6 !important;
+  transition: border-color 0.15s;
+}
+
+.glass-input:focus {
+  border-color: rgba(201, 167, 95, 0.6) !important;
+  outline: none !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+}
+
+.glass-input::placeholder {
+  color: rgba(166, 162, 154, 0.6);
+}
+
+.glass-input option {
+  background: #0D1117;
+  color: #F4F0E6;
+}
+
+.glass-navbar {
+  background: rgba(6, 8, 16, 0.80);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ── Scrollbar ────────────────────────────────────────── */
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #10141C;
+  background: rgba(255, 255, 255, 0.02);
 }
 ::-webkit-scrollbar-thumb {
-  background: #2A3040;
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #C9A75F;
+  background: rgba(201, 167, 95, 0.5);
 }
 
-/* Focus ring gold */
+/* ── Focus ring ───────────────────────────────────────── */
+
 *:focus-visible {
-  outline: 2px solid #C9A75F;
+  outline: 2px solid rgba(201, 167, 95, 0.6);
   outline-offset: 2px;
 }
 
-/* Table base */
+/* ── Table ────────────────────────────────────────────── */
+
 table {
   border-collapse: collapse;
   width: 100%;

@@ -2,16 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getRole(session: any): string {
+  return session?.user?.role ?? "collaboratore";
+}
+
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (["concierge", "collaboratore"].includes(getRole(session))) {
+    return NextResponse.json({ error: "Non autorizzato" }, { status: 403 });
+  }
 
   const { id } = await params;
   const body = await req.json();
-  const { name, location, description } = body;
+  const { name, location, description, images } = body;
 
   const data: Record<string, unknown> = {};
   if (name !== undefined) {
@@ -29,13 +37,12 @@ export async function PATCH(
   if (description !== undefined) {
     data.description = description ? String(description).trim() : null;
   }
+  if (images !== undefined && Array.isArray(images)) {
+    data.images = images;
+  }
 
-  const property = await prisma.property.update({
-    where: { id },
-    data,
-  });
-
-  return NextResponse.json(property);
+  const property = await prisma.property.update({ where: { id }, data });
+  return NextResponse.json({ ...property, images: (property.images ?? []) as string[] });
 }
 
 export async function DELETE(
@@ -44,10 +51,11 @@ export async function DELETE(
 ) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (getRole(session) !== "admin") {
+    return NextResponse.json({ error: "Solo gli admin possono eliminare proprietà" }, { status: 403 });
+  }
 
   const { id } = await params;
-
   await prisma.property.delete({ where: { id } });
-
   return NextResponse.json({ ok: true });
 }

@@ -54,6 +54,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const role = (session as any)?.user?.role ?? "collaboratore";
+  const sessionUserId = (session as any)?.user?.id;
+
+  // Auto-assign collaboratorId for concierge
+  const collaboratorId = role === "concierge" ? sessionUserId : (body.collaboratorId ?? null);
+
   const booking = await prisma.booking.create({
     data: {
       propertyId: room.propertyId,
@@ -73,6 +80,7 @@ export async function POST(request: NextRequest) {
       totalAmount: totalAmount ?? 0,
       status: status ?? "in_trattativa",
       notes: notes ?? null,
+      collaboratorId: collaboratorId ?? null,
     },
   });
 

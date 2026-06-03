@@ -247,6 +247,7 @@ export type MonthlyRateOrderByWithRelationInput = {
   price?: Prisma.SortOrder
   cleaningFee?: Prisma.SortOrder
   room?: Prisma.RoomOrderByWithRelationInput
+  _relevance?: Prisma.MonthlyRateOrderByRelevanceInput
 }
 
 export type MonthlyRateWhereUniqueInput = Prisma.AtLeast<{
@@ -359,6 +360,12 @@ export type MonthlyRateListRelationFilter = {
 
 export type MonthlyRateOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type MonthlyRateOrderByRelevanceInput = {
+  fields: Prisma.MonthlyRateOrderByRelevanceFieldEnum | Prisma.MonthlyRateOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type MonthlyRateRoomIdYearMonthCompoundUniqueInput = {
@@ -556,25 +563,7 @@ export type MonthlyRateSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["monthlyRate"]>
 
-export type MonthlyRateSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  roomId?: boolean
-  year?: boolean
-  month?: boolean
-  price?: boolean
-  cleaningFee?: boolean
-  room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["monthlyRate"]>
 
-export type MonthlyRateSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  roomId?: boolean
-  year?: boolean
-  month?: boolean
-  price?: boolean
-  cleaningFee?: boolean
-  room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["monthlyRate"]>
 
 export type MonthlyRateSelectScalar = {
   id?: boolean
@@ -587,12 +576,6 @@ export type MonthlyRateSelectScalar = {
 
 export type MonthlyRateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "roomId" | "year" | "month" | "price" | "cleaningFee", ExtArgs["result"]["monthlyRate"]>
 export type MonthlyRateInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
-}
-export type MonthlyRateIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
-}
-export type MonthlyRateIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
 }
 
@@ -726,30 +709,6 @@ export interface MonthlyRateDelegate<ExtArgs extends runtime.Types.Extensions.In
   createMany<T extends MonthlyRateCreateManyArgs>(args?: Prisma.SelectSubset<T, MonthlyRateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many MonthlyRates and returns the data saved in the database.
-   * @param {MonthlyRateCreateManyAndReturnArgs} args - Arguments to create many MonthlyRates.
-   * @example
-   * // Create many MonthlyRates
-   * const monthlyRate = await prisma.monthlyRate.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many MonthlyRates and only return the `id`
-   * const monthlyRateWithIdOnly = await prisma.monthlyRate.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends MonthlyRateCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, MonthlyRateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MonthlyRatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a MonthlyRate.
    * @param {MonthlyRateDeleteArgs} args - Arguments to delete one MonthlyRate.
    * @example
@@ -812,36 +771,6 @@ export interface MonthlyRateDelegate<ExtArgs extends runtime.Types.Extensions.In
    * 
    */
   updateMany<T extends MonthlyRateUpdateManyArgs>(args: Prisma.SelectSubset<T, MonthlyRateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more MonthlyRates and returns the data updated in the database.
-   * @param {MonthlyRateUpdateManyAndReturnArgs} args - Arguments to update many MonthlyRates.
-   * @example
-   * // Update many MonthlyRates
-   * const monthlyRate = await prisma.monthlyRate.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more MonthlyRates and only return the `id`
-   * const monthlyRateWithIdOnly = await prisma.monthlyRate.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends MonthlyRateUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, MonthlyRateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MonthlyRatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one MonthlyRate.
@@ -1276,29 +1205,6 @@ export type MonthlyRateCreateManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
- * MonthlyRate createManyAndReturn
- */
-export type MonthlyRateCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the MonthlyRate
-   */
-  select?: Prisma.MonthlyRateSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the MonthlyRate
-   */
-  omit?: Prisma.MonthlyRateOmit<ExtArgs> | null
-  /**
-   * The data used to create many MonthlyRates.
-   */
-  data: Prisma.MonthlyRateCreateManyInput | Prisma.MonthlyRateCreateManyInput[]
-  skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MonthlyRateIncludeCreateManyAndReturn<ExtArgs> | null
-}
-
-/**
  * MonthlyRate update
  */
 export type MonthlyRateUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1340,36 +1246,6 @@ export type MonthlyRateUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many MonthlyRates to update.
    */
   limit?: number
-}
-
-/**
- * MonthlyRate updateManyAndReturn
- */
-export type MonthlyRateUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the MonthlyRate
-   */
-  select?: Prisma.MonthlyRateSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the MonthlyRate
-   */
-  omit?: Prisma.MonthlyRateOmit<ExtArgs> | null
-  /**
-   * The data used to update MonthlyRates.
-   */
-  data: Prisma.XOR<Prisma.MonthlyRateUpdateManyMutationInput, Prisma.MonthlyRateUncheckedUpdateManyInput>
-  /**
-   * Filter which MonthlyRates to update
-   */
-  where?: Prisma.MonthlyRateWhereInput
-  /**
-   * Limit how many MonthlyRates to update.
-   */
-  limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MonthlyRateIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

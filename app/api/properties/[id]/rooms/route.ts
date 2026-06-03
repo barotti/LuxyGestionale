@@ -9,6 +9,12 @@ export async function POST(
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const role = (session as any)?.user?.role ?? "collaboratore";
+  if (["concierge", "collaboratore"].includes(role)) {
+    return NextResponse.json({ error: "Non autorizzato ad aggiungere camere" }, { status: 403 });
+  }
+
   const { id: propertyId } = await params;
   const body = await req.json();
   const { name, capacity, description } = body;

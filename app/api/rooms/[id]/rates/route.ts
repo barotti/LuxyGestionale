@@ -26,6 +26,12 @@ export async function PUT(
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const role = (session as any)?.user?.role ?? "collaboratore";
+  if (role === "concierge" || role === "collaboratore") {
+    return NextResponse.json({ error: "Non autorizzato a modificare i listini" }, { status: 403 });
+  }
+
   try {
     const { id: roomId } = await params;
     const body = await req.json();

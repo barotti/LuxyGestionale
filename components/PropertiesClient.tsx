@@ -16,8 +16,8 @@ interface Room { id: string; name: string; capacity: number; description?: strin
 interface Property { id: string; name: string; location: string; description?: string|null; images: string[]; rooms: Room[]; collaborators: Collaborator[] }
 
 // ─── Style helpers ───────────────────────────────────────────────
-const INPUT = "w-full bg-[#10141C] border border-[#2A3040] rounded-lg px-3 py-2 text-[#F4F0E6] text-sm placeholder-[#A6A29A] focus:border-[#C9A75F] focus:outline-none transition-colors";
-const LABEL = "block text-[#A6A29A] text-[10px] uppercase tracking-wider mb-1";
+const INPUT = "glass-input w-full rounded-lg px-3 py-2 text-sm";
+const LABEL = "block text-white/40 text-[10px] uppercase tracking-wider mb-1";
 
 // ─── Utility ─────────────────────────────────────────────────────
 async function apiFetch(method: string, url: string, body?: object) {
@@ -34,11 +34,11 @@ async function apiFetch(method: string, url: string, body?: object) {
 // ─── Modal ───────────────────────────────────────────────────────
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-[#151A24] border border-[#2A3040] rounded-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="glass-modal p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-[#F4F0E6] font-semibold">{title}</h3>
-          <button onClick={onClose} className="text-[#A6A29A] hover:text-[#F4F0E6] transition-colors"><X className="w-4 h-4" /></button>
+          <h3 className="text-white/90 font-semibold">{title}</h3>
+          <button onClick={onClose} className="text-white/40 hover:text-white/90 transition-colors"><X className="w-4 h-4" /></button>
         </div>
         {children}
       </div>
@@ -48,15 +48,26 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
 
 // ─── Images Section ──────────────────────────────────────────────
 function ImagesSection({ images, onUpdate }: { images: string[]; onUpdate: (imgs: string[]) => void }) {
-  const [adding, setAdding] = useState(false);
-  const [url, setUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
 
-  const add = () => {
-    const trimmed = url.trim();
-    if (!trimmed) return;
-    onUpdate([...images, trimmed]);
-    setUrl("");
-    setAdding(false);
+  const handleFiles = async (files: FileList) => {
+    setUploading(true);
+    try {
+      const newUrls: string[] = [];
+      for (const file of Array.from(files)) {
+        const fd = new FormData();
+        fd.append("file", file);
+        const res = await fetch("/api/upload", { method: "POST", body: fd });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? "Errore upload");
+        newUrls.push(data.url);
+      }
+      onUpdate([...images, ...newUrls]);
+    } catch (e) {
+      alert((e as Error).message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const remove = (i: number) => onUpdate(images.filter((_, idx) => idx !== i));
@@ -74,27 +85,27 @@ function ImagesSection({ images, onUpdate }: { images: string[]; onUpdate: (imgs
           </button>
         </div>
       ))}
-      {adding ? (
-        <div className="flex items-center gap-1">
-          <input
-            autoFocus
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") add(); if (e.key === "Escape") setAdding(false); }}
-            placeholder="https://..."
-            className="bg-[#10141C] border border-[#2A3040] rounded-lg px-2 py-1 text-[#F4F0E6] text-xs w-48 focus:border-[#C9A75F] focus:outline-none"
-          />
-          <button onClick={add} className="text-[#3BB273] hover:opacity-80"><Check className="w-4 h-4" /></button>
-          <button onClick={() => setAdding(false)} className="text-[#A6A29A] hover:opacity-80"><X className="w-4 h-4" /></button>
-        </div>
-      ) : (
-        <button
-          onClick={() => setAdding(true)}
-          className="w-20 h-20 border-2 border-dashed border-[#2A3040] hover:border-[#C9A75F] rounded-lg flex items-center justify-center text-[#A6A29A] hover:text-[#C9A75F] transition-colors"
-        >
+      <label
+        className={`w-20 h-20 border-2 border-dashed rounded-lg flex flex-col items-center justify-center transition-colors cursor-pointer ${
+          uploading
+            ? "border-white/10 text-white/20 cursor-wait"
+            : "border-white/15 hover:border-[#C9A75F]/60 text-white/30 hover:text-[#C9A75F]"
+        }`}
+      >
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          disabled={uploading}
+          onChange={(e) => e.target.files && handleFiles(e.target.files)}
+        />
+        {uploading ? (
+          <span className="text-[9px] text-center leading-tight px-1">upload...</span>
+        ) : (
           <Plus className="w-5 h-5" />
-        </button>
-      )}
+        )}
+      </label>
     </div>
   );
 }
@@ -139,17 +150,17 @@ function RatesSection({ roomId, initialRates }: { roomId: string; initialRates: 
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-[#A6A29A] text-[10px] uppercase tracking-wider">Listino Mensile</span>
-        {saving && <span className="text-[#A6A29A] text-[10px]">salvataggio...</span>}
+        <span className="text-white/40 text-[10px] uppercase tracking-wider">Listino Mensile</span>
+        {saving && <span className="text-white/30 text-[10px]">salvataggio...</span>}
       </div>
       <div className="flex flex-wrap gap-1.5 items-center">
         {rates
           .sort((a, b) => a.year !== b.year ? a.year - b.year : a.month - b.month)
           .map((r, i) => (
-            <span key={i} className="flex items-center gap-1 bg-[#10141C] border border-[#2A3040] rounded px-2 py-1 text-xs text-[#F4F0E6]">
+            <span key={i} className="flex items-center gap-1 bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-white/80">
               {r.year}-{String(r.month).padStart(2,"0")}
               <span className="text-[#C9A75F] font-semibold ml-1">€{r.price}</span>
-              <button onClick={() => remove(i)} className="text-[#A6A29A] hover:text-[#D95D5D] ml-1 transition-colors">
+              <button onClick={() => remove(i)} className="text-white/30 hover:text-[#D95D5D] ml-1 transition-colors">
                 <X className="w-2.5 h-2.5" />
               </button>
             </span>
@@ -160,13 +171,13 @@ function RatesSection({ roomId, initialRates }: { roomId: string; initialRates: 
               type="number"
               value={form.year}
               onChange={(e) => setForm(f => ({ ...f, year: e.target.value }))}
-              className="bg-[#10141C] border border-[#2A3040] rounded px-2 py-1 text-[#F4F0E6] text-xs w-16 focus:border-[#C9A75F] focus:outline-none"
+              className="glass-input rounded px-2 py-1 text-xs w-16"
               placeholder="Anno"
             />
             <select
               value={form.month}
               onChange={(e) => setForm(f => ({ ...f, month: e.target.value }))}
-              className="bg-[#10141C] border border-[#2A3040] rounded px-2 py-1 text-[#F4F0E6] text-xs focus:border-[#C9A75F] focus:outline-none"
+              className="glass-input rounded px-2 py-1 text-xs"
             >
               {MONTH_NAMES.map((m, i) => <option key={i} value={String(i + 1)}>{m}</option>)}
             </select>
@@ -174,14 +185,14 @@ function RatesSection({ roomId, initialRates }: { roomId: string; initialRates: 
               type="number"
               value={form.price}
               onChange={(e) => setForm(f => ({ ...f, price: e.target.value }))}
-              className="bg-[#10141C] border border-[#2A3040] rounded px-2 py-1 text-[#F4F0E6] text-xs w-20 focus:border-[#C9A75F] focus:outline-none"
+              className="glass-input rounded px-2 py-1 text-xs w-20"
               placeholder="€ prezzo"
             />
             <input
               type="number"
               value={form.cleaningFee}
               onChange={(e) => setForm(f => ({ ...f, cleaningFee: e.target.value }))}
-              className="bg-[#10141C] border border-[#2A3040] rounded px-2 py-1 text-[#F4F0E6] text-xs w-20 focus:border-[#C9A75F] focus:outline-none"
+              className="glass-input rounded px-2 py-1 text-xs w-20"
               placeholder="€ pulizie"
             />
             <button onClick={add} className="text-[#3BB273] hover:opacity-80 transition-opacity"><Check className="w-4 h-4" /></button>
@@ -190,7 +201,7 @@ function RatesSection({ roomId, initialRates }: { roomId: string; initialRates: 
         ) : (
           <button
             onClick={() => setAdding(true)}
-            className="flex items-center gap-1 border border-dashed border-[#2A3040] hover:border-[#C9A75F] text-[#A6A29A] hover:text-[#C9A75F] rounded px-2 py-1 text-xs transition-colors"
+            className="flex items-center gap-1 border border-dashed border-white/15 hover:border-[#C9A75F]/60 text-white/30 hover:text-[#C9A75F] rounded px-2 py-1 text-xs transition-colors"
           >
             <Plus className="w-3 h-3" /> Mese
           </button>
@@ -246,24 +257,24 @@ function RoomCard({
   };
 
   return (
-    <div className="bg-[#10141C] border border-[#2A3040] rounded-xl p-4">
+    <div className="glass-card glass-card-hover p-4 transition-colors duration-200">
       {/* Room header */}
       <div className="flex items-center justify-between mb-1">
         <div>
-          <h4 className="text-[#F4F0E6] font-semibold">{room.name}</h4>
-          <p className="text-[#A6A29A] text-xs">Capacità: {room.capacity} ospit{room.capacity === 1 ? "e" : "i"}</p>
+          <h4 className="text-white/90 font-semibold">{room.name}</h4>
+          <p className="text-white/40 text-xs">Capacità: {room.capacity} ospit{room.capacity === 1 ? "e" : "i"}</p>
         </div>
         <div className="flex items-center gap-1.5">
           <button onClick={() => { setForm({ name: room.name, capacity: String(room.capacity), description: room.description ?? "" }); setEditModal(true); }}
-            className="flex items-center gap-1 border border-[#2A3040] text-[#A6A29A] hover:text-[#F4F0E6] rounded-lg px-2.5 py-1.5 text-xs transition-colors">
+            className="flex items-center gap-1 border border-white/10 text-white/50 hover:text-white/90 rounded-lg px-2.5 py-1.5 text-xs transition-colors">
             <Edit2 className="w-3 h-3" /> Modifica
           </button>
           <Link href="/new-booking"
-            className="flex items-center gap-1 border border-[#2A3040] text-[#4A90E2] hover:border-[#4A90E2] rounded-lg px-2.5 py-1.5 text-xs transition-colors">
+            className="flex items-center gap-1 border border-white/10 text-[#4A90E2] hover:border-[#4A90E2]/60 rounded-lg px-2.5 py-1.5 text-xs transition-colors">
             <Calendar className="w-3 h-3" /> Calendario
           </Link>
           <button onClick={() => setDeleteConfirm(true)}
-            className="border border-[#D95D5D]/30 text-[#D95D5D] hover:bg-[#D95D5D]/10 rounded-lg p-1.5 transition-colors">
+            className="border border-[#D95D5D]/25 text-[#D95D5D] hover:bg-[#D95D5D]/10 rounded-lg p-1.5 transition-colors">
             <Trash2 className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -298,9 +309,9 @@ function RoomCard({
       {/* Delete confirm */}
       {deleteConfirm && (
         <Modal title="Elimina Camera" onClose={() => setDeleteConfirm(false)}>
-          <p className="text-[#A6A29A] text-sm mb-5">Eliminare <span className="text-[#F4F0E6] font-medium">{room.name}</span>? L&apos;azione è irreversibile.</p>
+          <p className="text-white/50 text-sm mb-5">Eliminare <span className="text-white/90 font-medium">{room.name}</span>? L&apos;azione è irreversibile.</p>
           <div className="flex gap-3">
-            <button onClick={() => setDeleteConfirm(false)} className="flex-1 border border-[#2A3040] text-[#A6A29A] rounded-lg py-2 text-sm hover:text-[#F4F0E6] transition-colors">Annulla</button>
+            <button onClick={() => setDeleteConfirm(false)} className="flex-1 border border-white/10 text-white/50 rounded-lg py-2 text-sm hover:text-white/90 transition-colors">Annulla</button>
             <button onClick={confirmDelete} className="flex-1 bg-[#D95D5D] hover:bg-[#C04A4A] text-white font-semibold rounded-lg py-2 text-sm transition-colors">Elimina</button>
           </div>
         </Modal>
@@ -337,8 +348,8 @@ function CollaboratorsSection({ propertyId, initial }: { propertyId: string; ini
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
-        <Users className="w-3.5 h-3.5 text-[#A6A29A]" />
-        <span className="text-[#A6A29A] text-[10px] uppercase tracking-wider">Collaboratori (Concierge / Owner)</span>
+        <Users className="w-3.5 h-3.5 text-white/40" />
+        <span className="text-white/40 text-[10px] uppercase tracking-wider">Collaboratori (Concierge / Owner)</span>
       </div>
       <div className="flex gap-2 mb-2">
         <input
@@ -356,14 +367,14 @@ function CollaboratorsSection({ propertyId, initial }: { propertyId: string; ini
       {err && <p className="text-[#D95D5D] text-xs mb-2">{err}</p>}
       <div className="flex flex-wrap gap-2">
         {collabs.map((c) => (
-          <span key={c.userId} className="flex items-center gap-1.5 bg-[#10141C] border border-[#2A3040] rounded-full px-3 py-1 text-xs text-[#F4F0E6]">
+          <span key={c.userId} className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3 py-1 text-xs text-white/80">
             {c.user.nickname}
-            <button onClick={() => remove(c.userId)} className="text-[#A6A29A] hover:text-[#D95D5D] transition-colors">
+            <button onClick={() => remove(c.userId)} className="text-white/30 hover:text-[#D95D5D] transition-colors">
               <X className="w-3 h-3" />
             </button>
           </span>
         ))}
-        {collabs.length === 0 && <p className="text-[#A6A29A] text-xs">Nessun collaboratore.</p>}
+        {collabs.length === 0 && <p className="text-white/30 text-xs">Nessun collaboratore.</p>}
       </div>
     </div>
   );
@@ -439,33 +450,33 @@ function PropertyPanel({
   };
 
   return (
-    <div className="bg-[#151A24] border border-[#2A3040] rounded-2xl overflow-hidden">
+    <div className="glass-card overflow-hidden">
       {/* Property header */}
-      <div className="px-6 pt-6 pb-4 border-b border-[#2A3040]">
+      <div className="px-6 pt-6 pb-4 border-b border-white/[0.06]">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-[#C9A75F] text-xl font-bold" style={{ fontFamily: "serif" }}>{property.name}</h2>
-            <div className="flex items-center gap-1 mt-1 text-[#A6A29A] text-sm">
-              <MapPin className="w-3.5 h-3.5 text-[#D95D5D]" />
+            <h2 className="text-[#E0C27A] text-xl font-bold" style={{ fontFamily: "Georgia, serif" }}>{property.name}</h2>
+            <div className="flex items-center gap-1 mt-1 text-white/50 text-sm">
+              <MapPin className="w-3.5 h-3.5 text-[#D95D5D]/80" />
               {property.location}
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => { setForm({ name: property.name, location: property.location, description: property.description ?? "" }); setEditModal(true); }}
-              className="flex items-center gap-1.5 border border-[#2A3040] text-[#A6A29A] hover:text-[#F4F0E6] rounded-lg px-3 py-1.5 text-xs transition-colors">
+              className="flex items-center gap-1.5 border border-white/10 text-white/50 hover:text-white/90 rounded-lg px-3 py-1.5 text-xs transition-colors">
               <Edit2 className="w-3 h-3" /> Modifica
             </button>
             <button onClick={() => setDeleteConfirm(true)}
-              className="border border-[#D95D5D]/30 text-[#D95D5D] hover:bg-[#D95D5D]/10 rounded-lg p-1.5 transition-colors">
+              className="border border-[#D95D5D]/25 text-[#D95D5D] hover:bg-[#D95D5D]/10 rounded-lg p-1.5 transition-colors">
               <Trash2 className="w-4 h-4" />
             </button>
-            <span className="bg-[#10141C] border border-[#2A3040] text-[#F4F0E6] text-xs rounded-lg px-3 py-1.5 font-medium">
+            <span className="bg-white/5 border border-white/10 text-white/80 text-xs rounded-lg px-3 py-1.5 font-medium">
               {property.rooms.length} Unità
             </span>
           </div>
         </div>
         {property.description && (
-          <p className="text-[#A6A29A] text-sm mt-3 leading-relaxed">{property.description}</p>
+          <p className="text-white/45 text-sm mt-3 leading-relaxed">{property.description}</p>
         )}
         <div className="mt-4">
           <ImagesSection images={property.images} onUpdate={updatePropertyImages} />
@@ -475,9 +486,9 @@ function PropertyPanel({
       {/* Body: rooms + right panel */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px]">
         {/* Left: rooms */}
-        <div className="p-6 space-y-4 border-r border-[#2A3040]">
+        <div className="p-6 space-y-4 border-r border-white/[0.06]">
           {property.rooms.length === 0 ? (
-            <p className="text-[#A6A29A] text-sm text-center py-8">Nessuna camera. Aggiungine una dal pannello a destra.</p>
+            <p className="text-white/35 text-sm text-center py-8">Nessuna camera. Aggiungine una dal pannello a destra.</p>
           ) : (
             property.rooms.map((room) => (
               <RoomCard key={room.id} room={room} propertyId={property.id} onUpdate={updateRoom} onDelete={() => deleteRoom(room.id)} />
@@ -489,7 +500,7 @@ function PropertyPanel({
         <div className="p-6 space-y-8">
           {/* Add room form */}
           <div>
-            <p className="text-[#A6A29A] text-[10px] uppercase tracking-wider mb-4">Nuova Camera</p>
+            <p className="text-white/40 text-[10px] uppercase tracking-wider mb-4">Nuova Camera</p>
             <div className="space-y-3">
               <div>
                 <label className={LABEL}>Nome</label>
@@ -538,9 +549,9 @@ function PropertyPanel({
       {/* Delete confirm */}
       {deleteConfirm && (
         <Modal title="Elimina Proprietà" onClose={() => setDeleteConfirm(false)}>
-          <p className="text-[#A6A29A] text-sm mb-5">Eliminare <span className="text-[#F4F0E6] font-medium">{property.name}</span>? Verranno eliminate anche tutte le stanze e prenotazioni associate.</p>
+          <p className="text-white/50 text-sm mb-5">Eliminare <span className="text-white/90 font-medium">{property.name}</span>? Verranno eliminate anche tutte le stanze e prenotazioni associate.</p>
           <div className="flex gap-3">
-            <button onClick={() => setDeleteConfirm(false)} className="flex-1 border border-[#2A3040] text-[#A6A29A] rounded-lg py-2 text-sm hover:text-[#F4F0E6] transition-colors">Annulla</button>
+            <button onClick={() => setDeleteConfirm(false)} className="flex-1 border border-white/10 text-white/50 rounded-lg py-2 text-sm hover:text-white/90 transition-colors">Annulla</button>
             <button onClick={confirmDelete} className="flex-1 bg-[#D95D5D] hover:bg-[#C04A4A] text-white font-semibold rounded-lg py-2 text-sm transition-colors">Elimina</button>
           </div>
         </Modal>
@@ -550,7 +561,7 @@ function PropertyPanel({
 }
 
 // ─── Main Export ─────────────────────────────────────────────────
-export function PropertiesClient({ properties: initial }: { properties: Property[] }) {
+export function PropertiesClient({ properties: initial, isAdmin = false, canCreate = false }: { properties: Property[]; isAdmin?: boolean; canCreate?: boolean }) {
   const [properties, setProperties] = useState<Property[]>(initial);
   const [createModal, setCreateModal] = useState(false);
   const [form, setForm] = useState({ name: "", location: "", description: "" });
@@ -574,21 +585,23 @@ export function PropertiesClient({ properties: initial }: { properties: Property
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#F4F0E6]">Le Tue Proprietà</h1>
-          <p className="text-[#A6A29A] text-sm mt-1">{properties.length} struttur{properties.length === 1 ? "a" : "e"}</p>
+          <h1 className="text-2xl font-bold text-white/90">Le Tue Proprietà</h1>
+          <p className="text-white/40 text-sm mt-1">{properties.length} struttur{properties.length === 1 ? "a" : "e"}</p>
         </div>
-        <button onClick={() => { setCreateModal(true); setErr(null); setForm({ name: "", location: "", description: "" }); }}
-          className="flex items-center gap-2 bg-[#C9A75F] hover:bg-[#E0C27A] text-[#070A0D] font-semibold rounded-lg px-4 py-2.5 text-sm transition-colors">
-          <Plus className="w-4 h-4" /> Nuova Proprietà
-        </button>
+        {(isAdmin || canCreate) && (
+          <button onClick={() => { setCreateModal(true); setErr(null); setForm({ name: "", location: "", description: "" }); }}
+            className="flex items-center gap-2 bg-[#C9A75F] hover:bg-[#E0C27A] text-[#070A0D] font-semibold rounded-lg px-4 py-2.5 text-sm transition-colors">
+            <Plus className="w-4 h-4" /> Nuova Proprietà
+          </button>
+        )}
       </div>
 
       {/* Empty state */}
       {properties.length === 0 && (
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <div className="text-5xl mb-4">🏠</div>
-          <h3 className="text-[#F4F0E6] font-semibold mb-2">Nessuna proprietà</h3>
-          <p className="text-[#A6A29A] text-sm max-w-xs">Inizia aggiungendo la tua prima struttura con il pulsante qui sopra.</p>
+          <h3 className="text-white/80 font-semibold mb-2">Nessuna proprietà</h3>
+          <p className="text-white/40 text-sm max-w-xs">Inizia aggiungendo la tua prima struttura con il pulsante qui sopra.</p>
         </div>
       )}
 

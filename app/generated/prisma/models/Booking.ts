@@ -440,6 +440,7 @@ export type BookingOrderByWithRelationInput = {
   room?: Prisma.RoomOrderByWithRelationInput
   paymentMethod?: Prisma.PaymentMethodOrderByWithRelationInput
   collaborator?: Prisma.UserOrderByWithRelationInput
+  _relevance?: Prisma.BookingOrderByRelevanceInput
 }
 
 export type BookingWhereUniqueInput = Prisma.AtLeast<{
@@ -741,6 +742,12 @@ export type BookingListRelationFilter = {
 
 export type BookingOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type BookingOrderByRelevanceInput = {
+  fields: Prisma.BookingOrderByRelevanceFieldEnum | Prisma.BookingOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type BookingCountOrderByAggregateInput = {
@@ -1838,69 +1845,7 @@ export type BookingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   collaborator?: boolean | Prisma.Booking$collaboratorArgs<ExtArgs>
 }, ExtArgs["result"]["booking"]>
 
-export type BookingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  propertyId?: boolean
-  roomId?: boolean
-  clientFirstName?: boolean
-  clientLastName?: boolean
-  clientPhone?: boolean
-  clientEmail?: boolean
-  guests?: boolean
-  checkIn?: boolean
-  checkOut?: boolean
-  nights?: boolean
-  stayAmount?: boolean
-  cleaningAmount?: boolean
-  ownerAmount?: boolean
-  feeAmount?: boolean
-  totalAmount?: boolean
-  collectedAmount?: boolean
-  paymentMethodId?: boolean
-  bookingSource?: boolean
-  status?: boolean
-  notes?: boolean
-  collaboratorId?: boolean
-  quotePdfUrl?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-  room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
-  paymentMethod?: boolean | Prisma.Booking$paymentMethodArgs<ExtArgs>
-  collaborator?: boolean | Prisma.Booking$collaboratorArgs<ExtArgs>
-}, ExtArgs["result"]["booking"]>
 
-export type BookingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  propertyId?: boolean
-  roomId?: boolean
-  clientFirstName?: boolean
-  clientLastName?: boolean
-  clientPhone?: boolean
-  clientEmail?: boolean
-  guests?: boolean
-  checkIn?: boolean
-  checkOut?: boolean
-  nights?: boolean
-  stayAmount?: boolean
-  cleaningAmount?: boolean
-  ownerAmount?: boolean
-  feeAmount?: boolean
-  totalAmount?: boolean
-  collectedAmount?: boolean
-  paymentMethodId?: boolean
-  bookingSource?: boolean
-  status?: boolean
-  notes?: boolean
-  collaboratorId?: boolean
-  quotePdfUrl?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-  room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
-  paymentMethod?: boolean | Prisma.Booking$paymentMethodArgs<ExtArgs>
-  collaborator?: boolean | Prisma.Booking$collaboratorArgs<ExtArgs>
-}, ExtArgs["result"]["booking"]>
 
 export type BookingSelectScalar = {
   id?: boolean
@@ -1932,18 +1877,6 @@ export type BookingSelectScalar = {
 
 export type BookingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "propertyId" | "roomId" | "clientFirstName" | "clientLastName" | "clientPhone" | "clientEmail" | "guests" | "checkIn" | "checkOut" | "nights" | "stayAmount" | "cleaningAmount" | "ownerAmount" | "feeAmount" | "totalAmount" | "collectedAmount" | "paymentMethodId" | "bookingSource" | "status" | "notes" | "collaboratorId" | "quotePdfUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["booking"]>
 export type BookingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-  room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
-  paymentMethod?: boolean | Prisma.Booking$paymentMethodArgs<ExtArgs>
-  collaborator?: boolean | Prisma.Booking$collaboratorArgs<ExtArgs>
-}
-export type BookingIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
-  room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
-  paymentMethod?: boolean | Prisma.Booking$paymentMethodArgs<ExtArgs>
-  collaborator?: boolean | Prisma.Booking$collaboratorArgs<ExtArgs>
-}
-export type BookingIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
   room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
   paymentMethod?: boolean | Prisma.Booking$paymentMethodArgs<ExtArgs>
@@ -2102,30 +2035,6 @@ export interface BookingDelegate<ExtArgs extends runtime.Types.Extensions.Intern
   createMany<T extends BookingCreateManyArgs>(args?: Prisma.SelectSubset<T, BookingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many Bookings and returns the data saved in the database.
-   * @param {BookingCreateManyAndReturnArgs} args - Arguments to create many Bookings.
-   * @example
-   * // Create many Bookings
-   * const booking = await prisma.booking.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many Bookings and only return the `id`
-   * const bookingWithIdOnly = await prisma.booking.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends BookingCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, BookingCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a Booking.
    * @param {BookingDeleteArgs} args - Arguments to delete one Booking.
    * @example
@@ -2188,36 +2097,6 @@ export interface BookingDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    * 
    */
   updateMany<T extends BookingUpdateManyArgs>(args: Prisma.SelectSubset<T, BookingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more Bookings and returns the data updated in the database.
-   * @param {BookingUpdateManyAndReturnArgs} args - Arguments to update many Bookings.
-   * @example
-   * // Update many Bookings
-   * const booking = await prisma.booking.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more Bookings and only return the `id`
-   * const bookingWithIdOnly = await prisma.booking.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends BookingUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, BookingUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one Booking.
@@ -2674,29 +2553,6 @@ export type BookingCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * Booking createManyAndReturn
- */
-export type BookingCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Booking
-   */
-  select?: Prisma.BookingSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the Booking
-   */
-  omit?: Prisma.BookingOmit<ExtArgs> | null
-  /**
-   * The data used to create many Bookings.
-   */
-  data: Prisma.BookingCreateManyInput | Prisma.BookingCreateManyInput[]
-  skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BookingIncludeCreateManyAndReturn<ExtArgs> | null
-}
-
-/**
  * Booking update
  */
 export type BookingUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2738,36 +2594,6 @@ export type BookingUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Bookings to update.
    */
   limit?: number
-}
-
-/**
- * Booking updateManyAndReturn
- */
-export type BookingUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Booking
-   */
-  select?: Prisma.BookingSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the Booking
-   */
-  omit?: Prisma.BookingOmit<ExtArgs> | null
-  /**
-   * The data used to update Bookings.
-   */
-  data: Prisma.XOR<Prisma.BookingUpdateManyMutationInput, Prisma.BookingUncheckedUpdateManyInput>
-  /**
-   * Filter which Bookings to update
-   */
-  where?: Prisma.BookingWhereInput
-  /**
-   * Limit how many Bookings to update.
-   */
-  limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BookingIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

@@ -10,7 +10,8 @@ export async function POST(
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id: propertyId } = await params;
-  const { nickname } = await req.json();
+  const body = await req.json();
+  const { nickname } = body;
 
   if (!nickname?.trim()) {
     return NextResponse.json({ error: "Nickname obbligatorio" }, { status: 400 });
@@ -28,8 +29,12 @@ export async function POST(
     return NextResponse.json({ error: "Collaboratore già presente" }, { status: 409 });
   }
 
+  const roleOnProperty = ["owner", "concierge", "collaboratore"].includes(body.roleOnProperty)
+    ? body.roleOnProperty
+    : "collaboratore";
+
   const collab = await prisma.propertyCollaborator.create({
-    data: { propertyId, userId: user.id, roleOnProperty: "collaboratore" },
+    data: { propertyId, userId: user.id, roleOnProperty },
     include: { user: { select: { id: true, nickname: true, role: true } } },
   });
 
