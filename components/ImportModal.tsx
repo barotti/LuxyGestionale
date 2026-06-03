@@ -110,7 +110,7 @@ function parseSheet(file: File): Promise<ImportRow[]> {
             const row = blankRow(idx + 1);
             for (const [k, v] of Object.entries(r)) {
               const key = COL_MAP[k.toLowerCase().trim()];
-              if (key) (row as Record<string, string>)[key] = String(v).trim();
+              if (key) (row as unknown as Record<string, string>)[key] = String(v).trim();
             }
             return row;
           })
